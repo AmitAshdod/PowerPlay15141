@@ -5,14 +5,16 @@ package OpModes;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.SubSystems.Field_Centric;
-import org.firstinspires.ftc.teamcode.SubSystems.cGamepad;
 
+import SubSystems.Field_Centric;
+import SubSystems.cGamepad;
+@Disabled
 @TeleOp(name="Teleop_v2")
 
 public class Teleop_v2 extends OpMode

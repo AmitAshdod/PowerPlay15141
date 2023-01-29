@@ -14,9 +14,9 @@ import SubSystems.Field_Centric;
 import SubSystems.cGamepad;
 
 
-@TeleOp(name="Teleop_v1")
+@TeleOp(name="Final_TeleOp", group = "Final_OpModes")
 @Config
-public class Teleop_v1 extends OpMode
+public class Final_TeleOp extends OpMode
 {
     // DcMotors
     private DcMotor mFL = null; // Front Left Dc Motor
