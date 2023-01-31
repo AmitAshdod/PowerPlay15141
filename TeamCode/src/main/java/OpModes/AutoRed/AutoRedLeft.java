@@ -29,7 +29,7 @@ public class AutoRedLeft extends LinearOpMode {
 
     public static double poseParkX = -34, poseParkY = -10, poseParkAngle = 90;
 
-    public static double poseDeliveryX = -34, poseDeliveryY = -10 ;
+    public static double poseDeliveryX = -30, poseDeliveryY = -10 ;
 
 
     public static double TARGET_RESET = 0.0;
