@@ -1,6 +1,8 @@
 
 package OpModes;
 
+import static SubSystems.Imu.imu;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -8,9 +10,11 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import SubSystems.Field_Centric;
+import SubSystems.Imu;
 import SubSystems.cGamepad;
 
 
@@ -28,7 +32,7 @@ public class Final_TeleOp extends OpMode
     // servos
     private Servo sG = null; // Servo Pinch
 
-    private BNO055IMU imu = null;
+
     cGamepad m1 = null;
 
     public static double TARGET_RESET = 0.0;
@@ -71,10 +75,7 @@ public class Final_TeleOp extends OpMode
         mE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // gyro calibration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+        Imu imu = new Imu(hardwareMap, telemetry);
     }
 
     @Override

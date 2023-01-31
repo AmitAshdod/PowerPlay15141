@@ -13,13 +13,13 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name = "AutoRedRight")
-public class AutoRedRight extends LinearOpMode {
+@Autonomous(name = "AutoRedLeft2")
+public class AutoRedLeft2 extends LinearOpMode {
 
-    public static double startPoseX = 36, startPoseY = -72, startPoseAngle = 90;
-    public static double startConeDeliveryPoseX = 34, startConeDeliveryPoseY = -10, startConeDeliveryAngle = 180;
-    public static double startConeDeliveryPoseHelpX = 32, startConeDeliveryPoseHelpY = -10;
-    public static double parkPoseX = 40 , parkPoseY = -34, poseParkAngle = 90;
+    public static double startPoseX = -36, startPoseY = -72, startPoseAngle = 90;
+    public static double startConeDeliveryPoseX = -34, startConeDeliveryPoseY = -10, startConeDeliveryAngle = 0;
+    public static double startConeDeliveryPoseHelpX = -35, startConeDeliveryPoseHelpY = -10;
+    public static double parkPoseX = -40 , parkPoseY = -34, poseParkAngle;
 
     public static double TARGET_RESET = 0.0;
     public static double TARGET_OPEN = 0.5;
@@ -52,9 +52,8 @@ public class AutoRedRight extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(startPoseX,startPoseY, Math.toRadians(startPoseAngle));
         Pose2d firstCycleBarPose = new Pose2d(startConeDeliveryPoseX,startConeDeliveryPoseY, Math.toRadians(startConeDeliveryAngle));
-        Vector2d firstCycleHelp = new Vector2d( startConeDeliveryPoseHelpX - 5,startConeDeliveryPoseHelpY);
+        Vector2d firstCycleHelp = new Vector2d( startConeDeliveryPoseHelpX + 5,startConeDeliveryPoseHelpY);
         Pose2d parkPose =  new Pose2d(parkPoseX, parkPoseY, Math.toRadians(poseParkAngle));
-
 
 
         driveTrain.setPoseEstimate(startPose);
@@ -84,7 +83,7 @@ public class AutoRedRight extends LinearOpMode {
         MarkerCallback gripOpen = new MarkerCallback() {
             @Override
             public void onMarkerReached() {
-                sG.setPosition(TARGET_OPEN);
+                 sG.setPosition(TARGET_OPEN);
 
             }
         };

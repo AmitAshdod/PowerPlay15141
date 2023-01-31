@@ -11,6 +11,7 @@ public class Elevator {
 
     HardwareMap hardwareMap;
     Telemetry telemetry;
+    Grip grip;
 
 
     int minLevel = 1200, midLevel = 1990, highLevel = 2800, target = 0;
@@ -23,6 +24,8 @@ public class Elevator {
         mE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         mE.setDirection(DcMotor.Direction.REVERSE);
         mE.setTargetPosition(target);
+
+        grip.gripClose();
 
         }
 
@@ -39,6 +42,7 @@ public class Elevator {
         mE.setPower(power);
         mE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+
     }
 
         public void lowRod(){
@@ -47,6 +51,7 @@ public class Elevator {
         mE.setPower(power);
         mE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+
     }
 
         public void resetElevator(){
@@ -54,6 +59,7 @@ public class Elevator {
         mE.setTargetPosition(target);
         mE.setPower(power);
         mE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        grip.gripClose();
         }
 
         public int updateElevator(int pos){

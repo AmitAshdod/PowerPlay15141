@@ -1,4 +1,4 @@
 package com.example.meepmeeptesting;
 
-public class MeepMeepTesting {
+public class MeepMeep_BLUELEFT {
 }
