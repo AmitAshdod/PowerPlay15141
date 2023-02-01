@@ -1,11 +1,12 @@
 package OpModes.AutoBlue;
 
-import static SubSystems.Imu.imu;
+
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,8 +14,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
-import SubSystems.Imu;
 
 @Config
 @Autonomous(name = "AutoBlueRight")
@@ -35,13 +34,16 @@ public class AutoBlueRight extends LinearOpMode {
     DcMotor mE = null;
     Servo sG = null;
 
+    BNO055IMU imu = null;
+
     public static double DELIVERY_WAIT_TIME = 2, INTAKE_WAIT_TIME = 4, delayBetweenActions = 3;
 
-    Imu imu = new Imu(hardwareMap, telemetry);
-    double angle = Imu.imu.getAngularOrientation().firstAngle;
+    double angle = imu.getAngularOrientation().firstAngle;
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         mE = hardwareMap.get(DcMotor.class, "mE");
         sG = hardwareMap.get(Servo.class, "Grip");

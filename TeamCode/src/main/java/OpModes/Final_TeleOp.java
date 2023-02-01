@@ -1,8 +1,5 @@
 
 package OpModes;
-
-import static SubSystems.Imu.imu;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -10,11 +7,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import SubSystems.Field_Centric;
-import SubSystems.Imu;
 import SubSystems.cGamepad;
 
 
@@ -32,7 +27,7 @@ public class Final_TeleOp extends OpMode
     // servos
     private Servo sG = null; // Servo Pinch
 
-
+    private  BNO055IMU imu = null;
     cGamepad m1 = null;
 
     public static double TARGET_RESET = 0.0;
@@ -74,8 +69,13 @@ public class Final_TeleOp extends OpMode
         mBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         mE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
+
         // gyro calibration
-        Imu imu = new Imu(hardwareMap, telemetry);
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
     }
 
     @Override
@@ -119,8 +119,22 @@ public class Final_TeleOp extends OpMode
     {
         public static int run_Mode = 0;
         public static int temp = 0;
+        public static double offset = 0;
     }
+    public void field_centric_offset(@NonNull BNO055IMU imu, com.qualcomm.robotcore.hardware.Gamepad gamepad)
+    {
+        double rx = gamepad.right_stick_x/2;
 
+        double angle = -imu.getAngularOrientation().firstAngle;
+
+        mFL.setPower((0 + 0 + rx));
+        mBL.setPower((0 - 0 + rx));
+        mFR.setPower((0 - 0 - rx));
+        mBR.setPower((0 + 0 - rx));
+
+        telemetry.addData("global heading: ", angle);
+        Globals.offset = angle;
+    }
     public void field_centric_stick(@NonNull BNO055IMU imu, com.qualcomm.robotcore.hardware.Gamepad gamepad)
     {
         double tt = gamepad.right_trigger/2;
@@ -129,7 +143,7 @@ public class Final_TeleOp extends OpMode
         double rx = gamepad.right_stick_x;
         rx = (rx * tt) + (rx / 2);
 
-        double angle = -imu.getAngularOrientation().firstAngle;
+        double angle = -imu.getAngularOrientation().firstAngle + Globals.offset;
 
         double rotX = x * Math.cos(angle) - y * Math.sin(angle);
         rotX = (rotX * tt) + (rotX / 2);
@@ -164,7 +178,7 @@ public class Final_TeleOp extends OpMode
         else x = 0;
 
 
-        double angle = -imu.getAngularOrientation().firstAngle;
+        double angle = -imu.getAngularOrientation().firstAngle + Globals.offset;
 
         double rotX = x * Math.cos(angle) - y * Math.sin(angle);
         double rotY = x * Math.sin(angle) + y * Math.cos(angle);
@@ -183,6 +197,10 @@ public class Final_TeleOp extends OpMode
 
     public void field_centric(@NonNull BNO055IMU imu, com.qualcomm.robotcore.hardware.Gamepad gamepad)
     {
+        if(gamepad.right_stick_button)
+        {
+            field_centric_offset(imu, gamepad);
+        }
         if (gamepad.dpad_right || gamepad.dpad_left || gamepad.dpad_up || gamepad.dpad_down) field_centric_dpad(imu, gamepad);
         else field_centric_stick(imu, gamepad);
     }

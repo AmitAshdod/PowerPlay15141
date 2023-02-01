@@ -1,6 +1,6 @@
 package OpModes.AutoBlue;
 
-import static SubSystems.Imu.imu;
+
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -13,8 +13,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
-import SubSystems.Imu;
 
 @Config
 @Autonomous(name = "AutoBlueLeft")
@@ -35,9 +33,6 @@ public class AutoBlueLeft extends LinearOpMode {
 
     DcMotor mE = null;
     Servo sG = null;
-
-    Imu imu = new Imu(hardwareMap, telemetry);
-    double angle = Imu.imu.getAngularOrientation().firstAngle;
 
 
     public static double DELIVERY_WAIT_TIME = 2, INTAKE_WAIT_TIME = 4, delayBetweenActions = 3;
@@ -126,7 +121,6 @@ public class AutoBlueLeft extends LinearOpMode {
         if(isStopRequested()){ return;}
         waitForStart();
 
-        telemetry.addData("Imu.Angle", angle);
         driveTrain.followTrajectorySequence(firstConeCycle);
 
 
