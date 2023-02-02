@@ -26,10 +26,11 @@ public class AutoRedLeft extends LinearOpMode {
 
     public static double POSE_CONE_INTAKEX = -63, POSE_CONE_INTAKEY = -21, POSE_CONE_ANGLE = 180;
     public static double POSE_INTAKE_HELPX = -66, POSE_INTAKE_HELPY = -21;
+    public static double poseIntakeRotationAngle = 0;
 
     public static double poseParkX = -34, poseParkY = -10, poseParkAngle = 90;
 
-    public static double poseDeliveryX = -30, poseDeliveryY = -10 ;
+    public static double poseDeliveryX = -34, poseDeliveryY = -10 ;
 
 
     public static double TARGET_RESET = 0.0;
@@ -176,7 +177,7 @@ public class AutoRedLeft extends LinearOpMode {
                 .waitSeconds(offset)
                 .addTemporalMarker(gripOpen)
                 .waitSeconds(delayBetweenActions )
-                .lineToLinearHeading(coneIntake)
+                .splineToLinearHeading(coneIntake, poseIntakeRotationAngle)
                 .strafeTo(intakeHelp)
                 .addTemporalMarker(FifthCone)
                 .waitSeconds(offset)
@@ -200,7 +201,7 @@ public class AutoRedLeft extends LinearOpMode {
                //Cycle 2
 
                 .waitSeconds(delayBetweenActions)
-                .lineToLinearHeading(coneIntake)
+                .splineToLinearHeading(coneIntake, poseIntakeRotationAngle)
                 .strafeTo(intakeHelp)
                 .addTemporalMarker(FourthCone)
                 .waitSeconds(delayBetweenActions)
@@ -217,12 +218,12 @@ public class AutoRedLeft extends LinearOpMode {
                //Cycle 3
 
                 .waitSeconds(delayBetweenActions)
-                .lineToLinearHeading(coneIntake)
+                .splineToLinearHeading(coneIntake, poseIntakeRotationAngle)
                 .strafeTo(intakeHelp)
                 .addTemporalMarker(ThirdCone)
                 .waitSeconds(delayBetweenActions)
-               .addTemporalMarker(gripcClose)
-               .waitSeconds(delayBetweenActions)
+                .addTemporalMarker(gripcClose)
+                .waitSeconds(delayBetweenActions)
                 .addTemporalMarker(ElevatorMax)
                 .waitSeconds(offset)
                 .addTemporalMarker(gripcClose)
@@ -251,9 +252,8 @@ public class AutoRedLeft extends LinearOpMode {
                 .addTemporalMarker(gripOpen)
 
                  */
-
-               // Parking robot to an angle of 90 degrees
                 .lineToLinearHeading(posePark)
+
                 .build();
 
 
