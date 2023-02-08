@@ -15,7 +15,7 @@
         import SubSystems.cGamepad;
 
 
-@TeleOp(name="Teleop_v1")
+@TeleOp(name="Final_Teleop")
 @Config
 public class Final_TeleOp extends OpMode {
     // DcMotors
