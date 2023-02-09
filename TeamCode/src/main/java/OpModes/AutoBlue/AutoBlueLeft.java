@@ -49,7 +49,7 @@ public class AutoBlueLeft extends LinearOpMode {
     public static double poseParkX2 = -15, poseParkY2 = -24, poseParkAngle2 = 90;
     public static double poseParkX3 = -36, poseParkY3 = -10, poseParkAngle3 = 90;
 
-    public static double parkHelpX = -34, parkHelpY = -10;
+    public static double parkHelpX = -28, parkHelpY = -10;
 
     public static double TARGET_RESET = 0.0;
     public static double TARGET_OPEN = 0.5;
@@ -341,18 +341,21 @@ public class AutoBlueLeft extends LinearOpMode {
 
 
             TrajectorySequence park1 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                    .strafeTo(parkHelp)
                     .addTemporalMarker(ElevatorReset)
                     .waitSeconds(offset)
                     .lineToLinearHeading(posePark1)
                     .build();
 
             TrajectorySequence park2 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                    .strafeTo(parkHelp)
                     .addTemporalMarker(ElevatorReset)
                     .waitSeconds(offset)
                     .lineToLinearHeading(posePark2)
                     .build();
 
             TrajectorySequence park3 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                    .strafeTo(parkHelp)
                     .addTemporalMarker(ElevatorReset)
                     .waitSeconds(offset)
                     .lineToLinearHeading(posePark3)
