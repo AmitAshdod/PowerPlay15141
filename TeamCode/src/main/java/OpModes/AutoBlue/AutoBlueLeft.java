@@ -65,7 +65,7 @@ public class AutoBlueLeft extends LinearOpMode {
 
     public static double  delayBetweenActions = .5;
     public static double  offset = 1;
-    public static double  posiionX_offset = -28 ,posiionY_offset = -12 , posiioAngle_offset = 1;
+    public static double  posiionX_offset = -26 ,posiionY_offset = -12 , posiioAngle_offset = 1;
     public static double  deliveryX_offset = 3 ,deliveryY_offset = 0;
 
     OpenCvCamera camera;
@@ -342,6 +342,7 @@ public class AutoBlueLeft extends LinearOpMode {
 
             TrajectorySequence park1 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
                     .strafeTo(parkHelp)
+                    .waitSeconds(offset)
                     .addTemporalMarker(ElevatorReset)
                     .waitSeconds(offset)
                     .lineToLinearHeading(posePark1)
@@ -349,6 +350,7 @@ public class AutoBlueLeft extends LinearOpMode {
 
             TrajectorySequence park2 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
                     .strafeTo(parkHelp)
+                    .waitSeconds(offset)
                     .addTemporalMarker(ElevatorReset)
                     .waitSeconds(offset)
                     .lineToLinearHeading(posePark2)
