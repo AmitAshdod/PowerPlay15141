@@ -354,6 +354,7 @@ public class AutoBlueLeft extends LinearOpMode {
 
             TrajectorySequence park3 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
                     .addTemporalMarker(ElevatorReset)
+                    .waitSeconds(offset)
                     .lineToLinearHeading(posePark3)
                     .build();
 
