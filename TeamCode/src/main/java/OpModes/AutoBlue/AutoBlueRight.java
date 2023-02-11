@@ -28,42 +28,44 @@ import SubSystems.AprilTagDetectionPipeline;
 @Autonomous(name = "AutoBlueRight")
 public class AutoBlueRight extends LinearOpMode {
 
-    public static double startPoseX = -36, startPoseY = 72, startPoseAngle = -90;
-    public static double startConeDeliveryPoseX = -34, startConeDeliveryPoseY = 10, startConeDeliveryAngle = 0;
-    public static double startConeDeliveryPoseHelpX = -35, startConeDeliveryPoseHelpY = 10;
-    public static double parkPoseX = -40 , parkPoseY = 34, poseParkAngle = 90;
 
-    public static double CONE_DELIVERY_X = -36, CONE_DELIVERY_Y = -10, CONE_DELIVERY_ANGLE = 0;
+    public static double startPoseX = 36, startPoseY = 72, startPoseAngle = -90;
 
-    public static double POSE_CONE_INTAKEX = -63, POSE_CONE_INTAKEY = -21, POSE_CONE_ANGLE = 180;
-    public static double POSE_INTAKE_HELPX = -66, POSE_INTAKE_HELPY = -21;
+    public static double startConeDeliveryPoseX = 34, startConeDeliveryPoseY = 10, startConeDeliveryAngle = 0;
+    public static double startConeDeliveryPoseHelpX = 32, startConeDeliveryPoseHelpY = 10;
+
+    public static double CONE_DELIVERY_X = 36, CONE_DELIVERY_Y = 10, CONE_DELIVERY_ANGLE = 0;
+
+    public static double POSE_CONE_INTAKEX = 63, POSE_CONE_INTAKEY = 21, POSE_CONE_ANGLE = -180;
+    public static double POSE_INTAKE_HELPX = 66, POSE_INTAKE_HELPY = 21;
     public static double poseIntakeRotationAngle = 2;
 
-    public static double offset = 1;
+    public static double returnIntakeX = 63, returnIntakeY = 21;
 
+    public static double poseDeliveryX = 30, poseDeliveryY = 12 ;
+
+    public static double poseParkX1 = 36, poseParkY1 = 10, poseParkAngle1 = -90;
+    public static double poseParkX2 = 15, poseParkY2 = 24, poseParkAngle2 = -90;
+    public static double poseParkX3 = 36, poseParkY3 = 10, poseParkAngle3 = -90;
+
+    public static double parkHelpX = 28, parkHelpY = 10;
 
     public static double TARGET_RESET = 0.0;
     public static double TARGET_OPEN = 0.5;
     public static double TARGET_CLOSE = 0;
 
-    public static double poseParkX1 = -36, poseParkY1 = -10, poseParkAngle1 = 90;
-    public static double poseParkX2 = -15, poseParkY2 = -24, poseParkAngle2 = 90;
-    public static double poseParkX3 = -36, poseParkY3 = -10, poseParkAngle3 = 90;
-
-    public static double  posiionX_offset = -28 ,posiionY_offset = -12 , posiioAngle_offset = 1;
-
-    public static int fifthCone = 455 , fourthCone = 307, thirdCone = 210, secondCone = 110 , firstCone = 0;
     public static int minLevel = 1200, midLevel = 1990, highLevel = 2800, target = 0;
-    double power = 1;
+    public static int fifthCone = 455 , fourthCone = 307, thirdCone = 210, secondCone = 110 , firstCone = 0;
+    public static double power = 1;
 
+    public static boolean tot = true;
     DcMotor mE = null;
     Servo sG = null;
 
-    BNO055IMU imu = null;
-
-    public static double DELIVERY_WAIT_TIME = 2, INTAKE_WAIT_TIME = 4, delayBetweenActions = 3;
-
-    double angle = imu.getAngularOrientation().firstAngle;
+    public static double  delayBetweenActions = .5;
+    public static double  offset = 1;
+    public static double  posiionX_offset = 26 ,posiionY_offset = 12 , posiioAngle_offset = 1;
+    public static double  deliveryX_offset = -3 ,deliveryY_offset = 0;
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -101,7 +103,7 @@ public class AutoBlueRight extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280,960, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
@@ -111,8 +113,7 @@ public class AutoBlueRight extends LinearOpMode {
             }
         });
 
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        telemetry.setMsTransmissionInterval(50);
 
         mE = hardwareMap.get(DcMotor.class, "mE");
         sG = hardwareMap.get(Servo.class, "Grip");
@@ -130,23 +131,24 @@ public class AutoBlueRight extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(startPoseX,startPoseY, Math.toRadians(startPoseAngle));
         Pose2d firstCycleBarPose = new Pose2d(startConeDeliveryPoseX,startConeDeliveryPoseY, Math.toRadians(startConeDeliveryAngle));
-        Pose2d parkPose =  new Pose2d(parkPoseX, parkPoseY, Math.toRadians(poseParkAngle));
-        Pose2d ConeDelivery = new Pose2d(CONE_DELIVERY_X, CONE_DELIVERY_Y, Math.toRadians(CONE_DELIVERY_ANGLE));
-        Pose2d poseOffest =  new Pose2d( posiionX_offset,  posiionY_offset , Math.toRadians(posiioAngle_offset));
         Pose2d coneIntake = new Pose2d(POSE_CONE_INTAKEX, POSE_CONE_INTAKEY, Math.toRadians(POSE_CONE_ANGLE));
-
-
-        Vector2d cycleHelp = new Vector2d(CONE_DELIVERY_X, CONE_DELIVERY_Y);
-        Vector2d firstCycleHelp = new Vector2d( startConeDeliveryPoseHelpX ,startConeDeliveryPoseHelpY);
-        Vector2d intakeHelp = new Vector2d( POSE_INTAKE_HELPX, POSE_INTAKE_HELPY);
-        Vector2d intakeReturn = new Vector2d( POSE_CONE_INTAKEX + offset, POSE_CONE_INTAKEY + offset);
-        Vector2d cycleHelp2 = new Vector2d( CONE_DELIVERY_X + 1, CONE_DELIVERY_Y + 1);
+        Pose2d ConeDelivery = new Pose2d(CONE_DELIVERY_X, CONE_DELIVERY_Y, Math.toRadians(CONE_DELIVERY_ANGLE));
 
         Pose2d posePark1 = new Pose2d(poseParkX1, poseParkY1, Math.toRadians(poseParkAngle3));
         Pose2d posePark2 = new Pose2d(poseParkX2, poseParkY2, Math.toRadians(poseParkAngle2));
         Pose2d posePark3 = new Pose2d(poseParkX3, poseParkY3, Math.toRadians(poseParkAngle3));
 
+        Vector2d parkHelp = new Vector2d(parkHelpX, parkHelpY);
 
+        Pose2d poseOffest =  new Pose2d( posiionX_offset,  posiionY_offset , Math.toRadians(posiioAngle_offset));
+
+        Vector2d firstCycleHelp = new Vector2d( startConeDeliveryPoseHelpX ,startConeDeliveryPoseHelpY);
+
+        Vector2d intakeHelp = new Vector2d( POSE_INTAKE_HELPX, POSE_INTAKE_HELPY);
+        Vector2d intakeReturn = new Vector2d(returnIntakeX, returnIntakeY);
+
+        Vector2d cycleHelp2 = new Vector2d( poseDeliveryX + deliveryX_offset , poseDeliveryY + deliveryY_offset);
+        Vector2d cycleHelp = new Vector2d(poseDeliveryX, poseDeliveryY);
 
 
 
@@ -158,18 +160,6 @@ public class AutoBlueRight extends LinearOpMode {
                 mE.setTargetPosition(highLevel);
                 mE.setPower(power);
                 mE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            }
-        };
-
-        MarkerCallback ElevatorReset = new MarkerCallback() {
-            @Override
-            public void onMarkerReached() {
-                mE.setTargetPosition(target);
-                mE.setPower(power);
-                mE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
 
             }
         };
@@ -225,6 +215,17 @@ public class AutoBlueRight extends LinearOpMode {
             }
         };
 
+        MarkerCallback ElevatorReset = new MarkerCallback() {
+            @Override
+            public void onMarkerReached() {
+                mE.setTargetPosition(target);
+                mE.setPower(power);
+                mE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+            }
+        };
 
         MarkerCallback gripOpen = new MarkerCallback() {
             @Override
@@ -242,19 +243,18 @@ public class AutoBlueRight extends LinearOpMode {
             }
         };
 
-
-
         TrajectorySequence firstConeCycle = driveTrain.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(firstCycleBarPose)
                 .addTemporalMarker(ElevatorMax)
-                .waitSeconds(delayBetweenActions - 2)
+                .waitSeconds(offset)
                 .strafeTo(firstCycleHelp)
-                .waitSeconds(delayBetweenActions - 2.5)
+                .waitSeconds(offset)
                 .addTemporalMarker(gripOpen)
-                .waitSeconds(delayBetweenActions - 2)
-                .lineToLinearHeading(firstCycleBarPose)
-                .addTemporalMarker(ElevatorReset)
-                .lineToLinearHeading(parkPose)
+                .waitSeconds(delayBetweenActions )
+                .splineToLinearHeading(coneIntake, poseIntakeRotationAngle)
+                .strafeTo(intakeHelp)
+                .addTemporalMarker(FifthCone)
+                .waitSeconds(offset)
                 .build();
 
 
@@ -339,21 +339,30 @@ public class AutoBlueRight extends LinearOpMode {
                 .build();
 
 
-
         TrajectorySequence park1 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                .strafeTo(parkHelp)
+                .waitSeconds(offset)
                 .addTemporalMarker(ElevatorReset)
+                .waitSeconds(offset)
                 .lineToLinearHeading(posePark1)
                 .build();
 
         TrajectorySequence park2 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                .strafeTo(parkHelp)
+                .waitSeconds(offset)
                 .addTemporalMarker(ElevatorReset)
+                .waitSeconds(offset)
                 .lineToLinearHeading(posePark2)
                 .build();
 
         TrajectorySequence park3 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                .strafeTo(parkHelp)
                 .addTemporalMarker(ElevatorReset)
                 .lineToLinearHeading(posePark3)
                 .build();
+
+
+
 
 
 
@@ -431,9 +440,11 @@ public class AutoBlueRight extends LinearOpMode {
             telemetry.update();
             sleep(20);
         }
+
         waitForStart();
 
         driveTrain.followTrajectorySequence(firstConeCycle);
+        driveTrain.followTrajectorySequence(ConeCycles);
 
         switch (tagOfInterest.id)
         {
@@ -453,6 +464,8 @@ public class AutoBlueRight extends LinearOpMode {
 
         while (opModeIsActive());
     }
+
+
 
     void tagToTelemetry(AprilTagDetection detection)
     {

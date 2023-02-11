@@ -30,6 +30,7 @@ import SubSystems.AprilTagDetectionPipeline;
 @Autonomous(name = "AutoBlueLeft")
 public class AutoBlueLeft extends LinearOpMode {
 
+
     public static double startPoseX = -36, startPoseY = -72, startPoseAngle = 90;
 
     public static double startConeDeliveryPoseX = -34, startConeDeliveryPoseY = -10, startConeDeliveryAngle = 0;
@@ -43,11 +44,11 @@ public class AutoBlueLeft extends LinearOpMode {
 
     public static double returnIntakeX = -63, returnIntakeY = -21;
 
-    public static double poseDeliveryX = -30, poseDeliveryY = -12 ;
+    public static double poseDeliveryX = -28, poseDeliveryY = -12 ;
 
     public static double poseParkX1 = -36, poseParkY1 = -10, poseParkAngle1 = 90;
-    public static double poseParkX2 = -15, poseParkY2 = -24, poseParkAngle2 = 90;
-    public static double poseParkX3 = -36, poseParkY3 = -10, poseParkAngle3 = 90;
+    public static double poseParkX2 = -40, poseParkY2 = -7, poseParkAngle2 = 90;
+    public static double poseParkX3 = -56, poseParkY3 = -7, poseParkAngle3 = 90;
 
     public static double parkHelpX = -28, parkHelpY = -10;
 
@@ -68,9 +69,15 @@ public class AutoBlueLeft extends LinearOpMode {
     public static double  posiionX_offset = -26 ,posiionY_offset = -12 , posiioAngle_offset = 1;
     public static double  deliveryX_offset = 3 ,deliveryY_offset = 0;
 
+    public static double  gripOpenDelay = 0.35;
+    public static double  gripCloseDelay = 0.75;
+
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
     AprilTagDetection tagOfInterest = null;
+
+
 
 
     static final double FEET_PER_METER = 3.28084;
@@ -91,8 +98,8 @@ public class AutoBlueLeft extends LinearOpMode {
     int ID_TAG_OF_INTEREST2 = 1; // Tag ID 1 from the 36h11 family
     int ID_TAG_OF_INTEREST3 = 2; // Tag ID 2 from the 36h11 family
 
-        @Override
-        public void runOpMode() throws InterruptedException {
+    @Override
+    public void runOpMode() throws InterruptedException {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -153,7 +160,7 @@ public class AutoBlueLeft extends LinearOpMode {
 
 
 
-            driveTrain.setPoseEstimate(startPose);
+        driveTrain.setPoseEstimate(startPose);
 
         MarkerCallback ElevatorMax = new MarkerCallback() {
             @Override
@@ -247,15 +254,14 @@ public class AutoBlueLeft extends LinearOpMode {
         TrajectorySequence firstConeCycle = driveTrain.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(firstCycleBarPose)
                 .addTemporalMarker(ElevatorMax)
-                .waitSeconds(offset)
+                .waitSeconds(delayBetweenActions)
                 .strafeTo(firstCycleHelp)
-                .waitSeconds(offset)
+                .waitSeconds(gripOpenDelay)
                 .addTemporalMarker(gripOpen)
                 .waitSeconds(delayBetweenActions )
                 .splineToLinearHeading(coneIntake, poseIntakeRotationAngle)
                 .strafeTo(intakeHelp)
                 .addTemporalMarker(FifthCone)
-                .waitSeconds(offset)
                 .build();
 
 
@@ -263,16 +269,16 @@ public class AutoBlueLeft extends LinearOpMode {
         TrajectorySequence ConeCycles = driveTrain.trajectorySequenceBuilder(firstConeCycle.end())
 
                 //Cycle 1
-
+                .waitSeconds(gripCloseDelay)
                 .addTemporalMarker(gripcClose)
                 .waitSeconds(delayBetweenActions)
                 .addTemporalMarker(ElevatorMax)
                 .strafeTo(intakeReturn)
                 .lineToLinearHeading(ConeDelivery)
                 .lineToLinearHeading(poseOffest)
-                .waitSeconds(offset)
+                .waitSeconds(delayBetweenActions)
                 .strafeTo(cycleHelp)
-                .waitSeconds(offset)
+                .waitSeconds(gripOpenDelay)
                 .addTemporalMarker(gripOpen)
 
                 //Cycle 2
@@ -282,17 +288,17 @@ public class AutoBlueLeft extends LinearOpMode {
                 .splineToLinearHeading(coneIntake, poseIntakeRotationAngle)
                 .strafeTo(intakeHelp)
                 .addTemporalMarker(FourthCone)
-                .waitSeconds(delayBetweenActions + .5)
+                .waitSeconds(gripCloseDelay)
                 .addTemporalMarker(gripcClose)
                 .waitSeconds(delayBetweenActions)
                 .addTemporalMarker(ElevatorMax)
                 .waitSeconds(delayBetweenActions)
                 .strafeTo(intakeReturn)
                 .lineToLinearHeading(ConeDelivery)
-                .lineToLinearHeading(poseOffest)
+                //.lineToLinearHeading(poseOffest)
                 .waitSeconds(delayBetweenActions)
                 .strafeTo(cycleHelp2)
-                .waitSeconds(delayBetweenActions)
+                .waitSeconds(gripOpenDelay)
                 .addTemporalMarker(gripOpen)
 
                 //Cycle 3
@@ -340,27 +346,23 @@ public class AutoBlueLeft extends LinearOpMode {
                 .build();
 
 
-            TrajectorySequence park1 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
-                    .strafeTo(parkHelp)
-                    .waitSeconds(offset)
-                    .addTemporalMarker(ElevatorReset)
-                    .waitSeconds(offset)
-                    .lineToLinearHeading(posePark1)
-                    .build();
+        TrajectorySequence park1 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                .strafeTo(parkHelp)
+                .lineToLinearHeading(posePark1)
+                .addTemporalMarker(ElevatorReset)
+                .build();
 
-            TrajectorySequence park2 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
-                    .strafeTo(parkHelp)
-                    .waitSeconds(offset)
-                    .addTemporalMarker(ElevatorReset)
-                    .waitSeconds(offset)
-                    .lineToLinearHeading(posePark2)
-                    .build();
+        TrajectorySequence park2 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                .strafeTo(parkHelp)
+                .lineToLinearHeading(posePark2)
+                .addTemporalMarker(ElevatorReset)
+                .build();
 
-            TrajectorySequence park3 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
-                    .strafeTo(parkHelp)
-                    .addTemporalMarker(ElevatorReset)
-                    .lineToLinearHeading(posePark3)
-                    .build();
+        TrajectorySequence park3 = driveTrain.trajectorySequenceBuilder(ConeCycles.end())
+                .strafeTo(parkHelp)
+                .lineToLinearHeading(posePark3)
+                .addTemporalMarker(ElevatorReset)
+                .build();
 
 
 
@@ -371,56 +373,40 @@ public class AutoBlueLeft extends LinearOpMode {
         if(isStopRequested()){ return;}
 
 
-            while (!isStarted() && !isStopRequested())
+        while (!isStarted() && !isStopRequested())
+        {
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+            if(currentDetections.size() != 0)
             {
-                ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+                boolean tagFound = false;
 
-                if(currentDetections.size() != 0)
+                for(AprilTagDetection tag : currentDetections)
                 {
-                    boolean tagFound = false;
-
-                    for(AprilTagDetection tag : currentDetections)
+                    if(tag.id == ID_TAG_OF_INTEREST1)
                     {
-                        if(tag.id == ID_TAG_OF_INTEREST1)
-                        {
-                            tagOfInterest = tag;
-                            tagFound = true;
-                            break;
-                        }
-                        else if(tag.id == ID_TAG_OF_INTEREST2)
-                        {
-                            tagOfInterest = tag;
-                            tagFound = true;
-                            break;
-                        }
-                        else if(tag.id == ID_TAG_OF_INTEREST3)
-                        {
-                            tagOfInterest = tag;
-                            tagFound = true;
-                            break;
-                        }
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
                     }
-
-                    if(tagFound)
+                    else if(tag.id == ID_TAG_OF_INTEREST2)
                     {
-                        telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                        tagToTelemetry(tagOfInterest);
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
                     }
-                    else
+                    else if(tag.id == ID_TAG_OF_INTEREST3)
                     {
-                        telemetry.addLine("Don't see tag of interest :(");
-
-                        if(tagOfInterest == null)
-                        {
-                            telemetry.addLine("(The tag has never been seen)");
-                        }
-                        else
-                        {
-                            telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                            tagToTelemetry(tagOfInterest);
-                        }
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
                     }
+                }
 
+                if(tagFound)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
                 }
                 else
                 {
@@ -435,36 +421,53 @@ public class AutoBlueLeft extends LinearOpMode {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
                     }
-
                 }
 
-                telemetry.update();
-                sleep(20);
+            }
+            else
+            {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if(tagOfInterest == null)
+                {
+                    telemetry.addLine("(The tag has never been seen)");
+                }
+                else
+                {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
             }
 
-            waitForStart();
+            telemetry.update();
+            sleep(20);
+        }
+
+        waitForStart();
 
         driveTrain.followTrajectorySequence(firstConeCycle);
         driveTrain.followTrajectorySequence(ConeCycles);
 
-            switch (tagOfInterest.id)
-            {
-                case 0:
-                    driveTrain.followTrajectorySequence(park1);
-                    break;
-                case 1:
-                    driveTrain.followTrajectorySequence(park2);
-                    break;
-                case 2:
-                default:
-                    driveTrain.followTrajectorySequence(park3);
-                    break;
-            }
-
-
-
-            while (opModeIsActive());
+        switch (tagOfInterest.id)
+        {
+            case 0:
+                driveTrain.followTrajectorySequence(park1);
+                break;
+            case 1:
+                driveTrain.followTrajectorySequence(park2);
+                break;
+            case 2:
+                driveTrain.followTrajectorySequence(park3);
+            default:
+                driveTrain.followTrajectorySequence(park1);
+                break;
         }
+
+
+
+        while (opModeIsActive());
+    }
 
 
 
