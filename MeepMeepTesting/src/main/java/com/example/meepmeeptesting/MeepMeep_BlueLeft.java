@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepBLUERIGHT {
+public class MeepMeep_BlueLeft {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(550);
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)

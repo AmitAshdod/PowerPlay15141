@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepRedRight {
+public class MeepMeep_RedRight {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(550);
 

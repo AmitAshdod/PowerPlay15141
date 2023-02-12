@@ -1,4 +1,4 @@
-package OpModes.AutoRed;
+package org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.AutoRed;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;

@@ -1,8 +1,7 @@
 
+package OpModes;
 
-        package OpModes;
-
-        import androidx.annotation.NonNull;
+import androidx.annotation.NonNull;
 
         import com.acmerobotics.dashboard.config.Config;
         import com.qualcomm.hardware.bosch.BNO055IMU;
